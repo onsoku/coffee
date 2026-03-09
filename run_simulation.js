@@ -110,19 +110,19 @@ function generateHtmlReport(data, title) {
     <div class="info">
       <div class="info-box">
         <h3>General</h3>
-        <p>Total Time: \${Math.floor(data.totalRoastTime / 60)}m \${data.totalRoastTime % 60}s</p>
-        <p>End Temp: \${data.finalTemperature} °C</p>
-        <p>Dry End: \${data.events.dryEnd ? Math.floor(data.events.dryEnd/60)+':'+String(data.events.dryEnd%60).padStart(2,'0') : 'N/A'}</p>
-        <p>1st Crack: \${data.events.firstCrack ? Math.floor(data.events.firstCrack/60)+':'+String(data.events.firstCrack%60).padStart(2,'0') : 'N/A'}</p>
-        <p>2nd Crack: \${data.events.secondCrack ? Math.floor(data.events.secondCrack/60)+':'+String(data.events.secondCrack%60).padStart(2,'0') : 'N/A'}</p>
+        <p>Total Time: ${Math.floor(data.totalRoastTime / 60)}m ${data.totalRoastTime % 60}s</p>
+        <p>End Temp: ${data.finalTemperature} °C</p>
+        <p>Dry End: ${data.events.dryEnd ? Math.floor(data.events.dryEnd/60)+':'+String(data.events.dryEnd%60).padStart(2,'0') : 'N/A'}</p>
+        <p>1st Crack: ${data.events.firstCrack ? Math.floor(data.events.firstCrack/60)+':'+String(data.events.firstCrack%60).padStart(2,'0') : 'N/A'}</p>
+        <p>2nd Crack: ${data.events.secondCrack ? Math.floor(data.events.secondCrack/60)+':'+String(data.events.secondCrack%60).padStart(2,'0') : 'N/A'}</p>
       </div>
       <div class="info-box">
-        <h3>Cupping Score (\${data.cuppingScores.overall})</h3>
-        \${Object.entries(data.cuppingScores).map(([key, value]) => key !== 'overall' ? \`
-          <div style="font-size: 0.9em; margin-bottom: 4px;">\${key.charAt(0).toUpperCase() + key.slice(1)}: \${value}
-            <div class="score-bar"><div class="score-fill" style="width: \${value}%"></div></div>
+        <h3>Cupping Score (${data.cuppingScores.overall})</h3>
+        ${Object.entries(data.cuppingScores).map(([key, value]) => key !== 'overall' ? `
+          <div style="font-size: 0.9em; margin-bottom: 4px;">${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}
+            <div class="score-bar"><div class="score-fill" style="width: ${value}%"></div></div>
           </div>
-        \` : '').join('')}
+        ` : '').join('')}
       </div>
     </div>
     
@@ -130,8 +130,8 @@ function generateHtmlReport(data, title) {
   </div>
 
   <script>
-    const roastData = \${JSON.stringify(data.roastProfile)};
-    const events = \${JSON.stringify(data.events)};
+    const roastData = ${JSON.stringify(data.roastProfile)};
+    const events = ${JSON.stringify(data.events)};
     
     const labels = roastData.map(d => {
       const m = Math.floor(d.time / 60);

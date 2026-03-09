@@ -22,19 +22,43 @@
     <div class="info">
       <div class="info-box">
         <h3>General</h3>
-        <p>Total Time: ${Math.floor(data.totalRoastTime / 60)}m ${data.totalRoastTime % 60}s</p>
-        <p>End Temp: ${data.finalTemperature} °C</p>
-        <p>Dry End: ${data.events.dryEnd ? Math.floor(data.events.dryEnd/60)+':'+String(data.events.dryEnd%60).padStart(2,'0') : 'N/A'}</p>
-        <p>1st Crack: ${data.events.firstCrack ? Math.floor(data.events.firstCrack/60)+':'+String(data.events.firstCrack%60).padStart(2,'0') : 'N/A'}</p>
-        <p>2nd Crack: ${data.events.secondCrack ? Math.floor(data.events.secondCrack/60)+':'+String(data.events.secondCrack%60).padStart(2,'0') : 'N/A'}</p>
+        <p>Total Time: 14m 1s</p>
+        <p>End Temp: 210.9 °C</p>
+        <p>Dry End: 2:39</p>
+        <p>1st Crack: 3:54</p>
+        <p>2nd Crack: 4:42</p>
       </div>
       <div class="info-box">
-        <h3>Cupping Score (${data.cuppingScores.overall})</h3>
-        ${Object.entries(data.cuppingScores).map(([key, value]) => key !== 'overall' ? `
-          <div style="font-size: 0.9em; margin-bottom: 4px;">${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}
-            <div class="score-bar"><div class="score-fill" style="width: ${value}%"></div></div>
+        <h3>Cupping Score (76)</h3>
+        
+          <div style="font-size: 0.9em; margin-bottom: 4px;">Aroma: 75
+            <div class="score-bar"><div class="score-fill" style="width: 75%"></div></div>
           </div>
-        ` : '').join('')}
+        
+          <div style="font-size: 0.9em; margin-bottom: 4px;">Flavor: 62
+            <div class="score-bar"><div class="score-fill" style="width: 62%"></div></div>
+          </div>
+        
+          <div style="font-size: 0.9em; margin-bottom: 4px;">Aftertaste: 80
+            <div class="score-bar"><div class="score-fill" style="width: 80%"></div></div>
+          </div>
+        
+          <div style="font-size: 0.9em; margin-bottom: 4px;">Acidity: 60
+            <div class="score-bar"><div class="score-fill" style="width: 60%"></div></div>
+          </div>
+        
+          <div style="font-size: 0.9em; margin-bottom: 4px;">Body: 81
+            <div class="score-bar"><div class="score-fill" style="width: 81%"></div></div>
+          </div>
+        
+          <div style="font-size: 0.9em; margin-bottom: 4px;">Sweetness: 74
+            <div class="score-bar"><div class="score-fill" style="width: 74%"></div></div>
+          </div>
+        
+          <div style="font-size: 0.9em; margin-bottom: 4px;">CleanCup: 100
+            <div class="score-bar"><div class="score-fill" style="width: 100%"></div></div>
+          </div>
+        
       </div>
     </div>
     
@@ -42,8 +66,8 @@
   </div>
 
   <script>
-    const roastData = ${JSON.stringify(data.roastProfile)};
-    const events = ${JSON.stringify(data.events)};
+    const roastData = [{"time":10,"bt":28.3,"envTemp":139.4,"ror":0.56,"heatPower":75},{"time":20,"bt":35.8,"envTemp":207.8,"ror":0.86,"heatPower":75},{"time":30,"bt":45.4,"envTemp":248.8,"ror":1.02,"heatPower":75},{"time":40,"bt":56,"envTemp":273.4,"ror":1.09,"heatPower":75},{"time":50,"bt":67.1,"envTemp":288.1,"ror":1.11,"heatPower":75},{"time":60,"bt":78.1,"envTemp":296.9,"ror":1.1,"heatPower":75},{"time":70,"bt":89,"envTemp":302.1,"ror":1.07,"heatPower":75},{"time":80,"bt":99.5,"envTemp":305.3,"ror":1.03,"heatPower":75},{"time":90,"bt":106.9,"envTemp":307.2,"ror":0.7,"heatPower":75},{"time":100,"bt":113.9,"envTemp":308.3,"ror":0.68,"heatPower":75},{"time":110,"bt":120.6,"envTemp":309,"ror":0.66,"heatPower":75},{"time":120,"bt":127.1,"envTemp":309.4,"ror":0.64,"heatPower":75},{"time":130,"bt":133.4,"envTemp":309.6,"ror":0.62,"heatPower":75},{"time":140,"bt":139.4,"envTemp":309.8,"ror":0.6,"heatPower":75},{"time":150,"bt":145.3,"envTemp":309.9,"ror":0.58,"heatPower":75},{"time":160,"bt":151.2,"envTemp":309.9,"ror":0.8,"heatPower":75},{"time":170,"bt":159,"envTemp":310,"ror":0.76,"heatPower":75},{"time":180,"bt":166.4,"envTemp":310,"ror":0.72,"heatPower":75},{"time":190,"bt":173.4,"envTemp":310,"ror":0.69,"heatPower":75},{"time":200,"bt":180.1,"envTemp":310,"ror":0.65,"heatPower":75},{"time":210,"bt":186.4,"envTemp":310,"ror":0.62,"heatPower":75},{"time":220,"bt":192.4,"envTemp":310,"ror":0.59,"heatPower":75},{"time":230,"bt":198.2,"envTemp":310,"ror":0.56,"heatPower":75},{"time":240,"bt":204.3,"envTemp":310,"ror":0.64,"heatPower":75},{"time":250,"bt":210.5,"envTemp":310,"ror":0.6,"heatPower":75},{"time":260,"bt":215.3,"envTemp":310,"ror":0.48,"heatPower":75},{"time":270,"bt":220,"envTemp":310,"ror":0.45,"heatPower":75},{"time":280,"bt":224.4,"envTemp":310,"ror":0.43,"heatPower":75},{"time":290,"bt":228.6,"envTemp":310,"ror":0.41,"heatPower":75},{"time":300,"bt":232.5,"envTemp":310,"ror":0.39,"heatPower":75},{"time":310,"bt":236.3,"envTemp":310,"ror":0.37,"heatPower":75},{"time":320,"bt":239.9,"envTemp":310,"ror":0.35,"heatPower":75},{"time":330,"bt":243.4,"envTemp":310,"ror":0.33,"heatPower":75},{"time":340,"bt":246.6,"envTemp":310,"ror":0.32,"heatPower":75},{"time":350,"bt":249.7,"envTemp":310,"ror":0.3,"heatPower":75},{"time":360,"bt":252.7,"envTemp":310,"ror":0.29,"heatPower":75},{"time":370,"bt":254.6,"envTemp":279.5,"ror":0.13,"heatPower":55},{"time":380,"bt":255.3,"envTemp":261.2,"ror":0.03,"heatPower":55},{"time":390,"bt":255.2,"envTemp":250.3,"ror":-0.02,"heatPower":55},{"time":400,"bt":254.8,"envTemp":243.8,"ror":-0.06,"heatPower":55},{"time":410,"bt":254.1,"envTemp":239.8,"ror":-0.07,"heatPower":55},{"time":420,"bt":253.4,"envTemp":237.5,"ror":-0.08,"heatPower":55},{"time":430,"bt":252.6,"envTemp":236.1,"ror":-0.08,"heatPower":55},{"time":440,"bt":251.7,"envTemp":235.3,"ror":-0.08,"heatPower":55},{"time":450,"bt":250.9,"envTemp":234.8,"ror":-0.08,"heatPower":55},{"time":460,"bt":250.1,"envTemp":234.4,"ror":-0.08,"heatPower":55},{"time":470,"bt":249.3,"envTemp":234.3,"ror":-0.08,"heatPower":55},{"time":480,"bt":248.6,"envTemp":234.2,"ror":-0.07,"heatPower":55},{"time":490,"bt":247.9,"envTemp":234.1,"ror":-0.07,"heatPower":55},{"time":500,"bt":247.2,"envTemp":234.1,"ror":-0.07,"heatPower":55},{"time":510,"bt":246.6,"envTemp":234,"ror":-0.06,"heatPower":55},{"time":520,"bt":246,"envTemp":234,"ror":-0.06,"heatPower":55},{"time":530,"bt":245.4,"envTemp":234,"ror":-0.06,"heatPower":55},{"time":540,"bt":244.8,"envTemp":234,"ror":-0.05,"heatPower":55},{"time":550,"bt":244.3,"envTemp":234,"ror":-0.05,"heatPower":55},{"time":560,"bt":243.8,"envTemp":234,"ror":-0.05,"heatPower":55},{"time":570,"bt":243.3,"envTemp":234,"ror":-0.05,"heatPower":55},{"time":580,"bt":242.9,"envTemp":234,"ror":-0.04,"heatPower":55},{"time":590,"bt":242.4,"envTemp":234,"ror":-0.04,"heatPower":55},{"time":600,"bt":242,"envTemp":234,"ror":-0.04,"heatPower":55},{"time":610,"bt":241.2,"envTemp":218.8,"ror":-0.11,"heatPower":45},{"time":620,"bt":239.8,"envTemp":209.6,"ror":-0.15,"heatPower":45},{"time":630,"bt":238.2,"envTemp":204.2,"ror":-0.17,"heatPower":45},{"time":640,"bt":236.4,"envTemp":200.9,"ror":-0.18,"heatPower":45},{"time":650,"bt":234.6,"envTemp":198.9,"ror":-0.18,"heatPower":45},{"time":660,"bt":232.8,"envTemp":197.8,"ror":-0.18,"heatPower":45},{"time":670,"bt":231.1,"envTemp":197,"ror":-0.17,"heatPower":45},{"time":680,"bt":229.4,"envTemp":196.6,"ror":-0.16,"heatPower":45},{"time":690,"bt":227.8,"envTemp":196.4,"ror":-0.16,"heatPower":45},{"time":700,"bt":226.3,"envTemp":196.2,"ror":-0.15,"heatPower":45},{"time":710,"bt":224.8,"envTemp":196.1,"ror":-0.14,"heatPower":45},{"time":720,"bt":223.4,"envTemp":196.1,"ror":-0.14,"heatPower":45},{"time":730,"bt":222.1,"envTemp":196,"ror":-0.13,"heatPower":45},{"time":740,"bt":220.8,"envTemp":196,"ror":-0.12,"heatPower":45},{"time":750,"bt":219.6,"envTemp":196,"ror":-0.12,"heatPower":45},{"time":760,"bt":218.4,"envTemp":196,"ror":-0.11,"heatPower":45},{"time":770,"bt":217.3,"envTemp":196,"ror":-0.11,"heatPower":45},{"time":780,"bt":216.3,"envTemp":196,"ror":-0.1,"heatPower":45},{"time":790,"bt":215.3,"envTemp":196,"ror":-0.1,"heatPower":45},{"time":800,"bt":214.4,"envTemp":196,"ror":-0.09,"heatPower":45},{"time":810,"bt":213.5,"envTemp":196,"ror":-0.09,"heatPower":45},{"time":820,"bt":212.6,"envTemp":196,"ror":-0.08,"heatPower":45},{"time":830,"bt":211.8,"envTemp":196,"ror":-0.08,"heatPower":45},{"time":840,"bt":211,"envTemp":196,"ror":-0.08,"heatPower":45}];
+    const events = {"dryEnd":159,"firstCrack":234,"secondCrack":282};
     
     const labels = roastData.map(d => {
       const m = Math.floor(d.time / 60);
