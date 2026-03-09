@@ -1,0 +1,323 @@
+{
+  "beanId": "ブラジル",
+  "roastDate": "2026-03-09T12:35:44.261Z",
+  "totalRoastTime": 421,
+  "finalTemperature": 350.5,
+  "roastLevel": "Very Dark / Scorched",
+  "events": {
+    "dryEnd": 115,
+    "firstCrack": 159,
+    "secondCrack": 183
+  },
+  "defects": {
+    "baked": false,
+    "scorched": false,
+    "underdeveloped": false
+  },
+  "cuppingScores": {
+    "aroma": 50,
+    "flavor": 50,
+    "aftertaste": 80,
+    "acidity": 40,
+    "body": 75,
+    "sweetness": 50,
+    "cleanCup": 100,
+    "overall": 64
+  },
+  "roastProfile": [
+    {
+      "time": 10,
+      "bt": 29.4,
+      "envTemp": 177.5,
+      "ror": 0.74,
+      "heatPower": 100
+    },
+    {
+      "time": 20,
+      "bt": 39.3,
+      "envTemp": 268.8,
+      "ror": 1.15,
+      "heatPower": 100
+    },
+    {
+      "time": 30,
+      "bt": 52.2,
+      "envTemp": 323.4,
+      "ror": 1.36,
+      "heatPower": 100
+    },
+    {
+      "time": 40,
+      "bt": 66.4,
+      "envTemp": 356.2,
+      "ror": 1.46,
+      "heatPower": 100
+    },
+    {
+      "time": 50,
+      "bt": 81.1,
+      "envTemp": 375.8,
+      "ror": 1.48,
+      "heatPower": 100
+    },
+    {
+      "time": 60,
+      "bt": 95.9,
+      "envTemp": 387.5,
+      "ror": 1.47,
+      "heatPower": 100
+    },
+    {
+      "time": 70,
+      "bt": 107.3,
+      "envTemp": 394.5,
+      "ror": 1.01,
+      "heatPower": 100
+    },
+    {
+      "time": 80,
+      "bt": 117.3,
+      "envTemp": 398.7,
+      "ror": 0.99,
+      "heatPower": 100
+    },
+    {
+      "time": 90,
+      "bt": 127.1,
+      "envTemp": 401.2,
+      "ror": 0.96,
+      "heatPower": 100
+    },
+    {
+      "time": 100,
+      "bt": 136.5,
+      "envTemp": 402.8,
+      "ror": 0.94,
+      "heatPower": 100
+    },
+    {
+      "time": 110,
+      "bt": 145.7,
+      "envTemp": 403.7,
+      "ror": 0.91,
+      "heatPower": 100
+    },
+    {
+      "time": 120,
+      "bt": 156.5,
+      "envTemp": 404.2,
+      "ror": 1.24,
+      "heatPower": 100
+    },
+    {
+      "time": 130,
+      "bt": 168.6,
+      "envTemp": 404.5,
+      "ror": 1.19,
+      "heatPower": 100
+    },
+    {
+      "time": 140,
+      "bt": 180.2,
+      "envTemp": 404.7,
+      "ror": 1.13,
+      "heatPower": 100
+    },
+    {
+      "time": 150,
+      "bt": 191.1,
+      "envTemp": 404.8,
+      "ror": 1.07,
+      "heatPower": 100
+    },
+    {
+      "time": 160,
+      "bt": 201.8,
+      "envTemp": 404.9,
+      "ror": 1.23,
+      "heatPower": 100
+    },
+    {
+      "time": 170,
+      "bt": 213.1,
+      "envTemp": 404.9,
+      "ror": 0.96,
+      "heatPower": 100
+    },
+    {
+      "time": 180,
+      "bt": 222.5,
+      "envTemp": 405,
+      "ror": 0.92,
+      "heatPower": 100
+    },
+    {
+      "time": 190,
+      "bt": 231.4,
+      "envTemp": 405,
+      "ror": 0.87,
+      "heatPower": 100
+    },
+    {
+      "time": 200,
+      "bt": 239.9,
+      "envTemp": 405,
+      "ror": 0.83,
+      "heatPower": 100
+    },
+    {
+      "time": 210,
+      "bt": 247.9,
+      "envTemp": 405,
+      "ror": 0.79,
+      "heatPower": 100
+    },
+    {
+      "time": 220,
+      "bt": 255.6,
+      "envTemp": 405,
+      "ror": 0.75,
+      "heatPower": 100
+    },
+    {
+      "time": 230,
+      "bt": 262.9,
+      "envTemp": 405,
+      "ror": 0.71,
+      "heatPower": 100
+    },
+    {
+      "time": 240,
+      "bt": 269.9,
+      "envTemp": 405,
+      "ror": 0.68,
+      "heatPower": 100
+    },
+    {
+      "time": 250,
+      "bt": 276.5,
+      "envTemp": 405,
+      "ror": 0.65,
+      "heatPower": 100
+    },
+    {
+      "time": 260,
+      "bt": 282.8,
+      "envTemp": 405,
+      "ror": 0.61,
+      "heatPower": 100
+    },
+    {
+      "time": 270,
+      "bt": 288.7,
+      "envTemp": 405,
+      "ror": 0.58,
+      "heatPower": 100
+    },
+    {
+      "time": 280,
+      "bt": 294.4,
+      "envTemp": 405,
+      "ror": 0.56,
+      "heatPower": 100
+    },
+    {
+      "time": 290,
+      "bt": 299.8,
+      "envTemp": 405,
+      "ror": 0.53,
+      "heatPower": 100
+    },
+    {
+      "time": 300,
+      "bt": 305,
+      "envTemp": 405,
+      "ror": 0.5,
+      "heatPower": 100
+    },
+    {
+      "time": 310,
+      "bt": 309.9,
+      "envTemp": 405,
+      "ror": 0.48,
+      "heatPower": 100
+    },
+    {
+      "time": 320,
+      "bt": 314.5,
+      "envTemp": 405,
+      "ror": 0.45,
+      "heatPower": 100
+    },
+    {
+      "time": 330,
+      "bt": 318.9,
+      "envTemp": 405,
+      "ror": 0.43,
+      "heatPower": 100
+    },
+    {
+      "time": 340,
+      "bt": 323.1,
+      "envTemp": 405,
+      "ror": 0.41,
+      "heatPower": 100
+    },
+    {
+      "time": 350,
+      "bt": 327.1,
+      "envTemp": 405,
+      "ror": 0.39,
+      "heatPower": 100
+    },
+    {
+      "time": 360,
+      "bt": 330.9,
+      "envTemp": 405,
+      "ror": 0.37,
+      "heatPower": 100
+    },
+    {
+      "time": 370,
+      "bt": 334.6,
+      "envTemp": 405,
+      "ror": 0.35,
+      "heatPower": 100
+    },
+    {
+      "time": 380,
+      "bt": 338,
+      "envTemp": 405,
+      "ror": 0.34,
+      "heatPower": 100
+    },
+    {
+      "time": 390,
+      "bt": 341.3,
+      "envTemp": 405,
+      "ror": 0.32,
+      "heatPower": 100
+    },
+    {
+      "time": 400,
+      "bt": 344.4,
+      "envTemp": 405,
+      "ror": 0.3,
+      "heatPower": 100
+    },
+    {
+      "time": 410,
+      "bt": 347.4,
+      "envTemp": 405,
+      "ror": 0.29,
+      "heatPower": 100
+    },
+    {
+      "time": 420,
+      "bt": 350.2,
+      "envTemp": 405,
+      "ror": 0.28,
+      "heatPower": 100
+    }
+  ]
+}
