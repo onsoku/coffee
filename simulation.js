@@ -116,8 +116,8 @@ class RoastSimulation {
    */
   evaluate() {
     const finalTemp = this.bt;
-    const base = this.bean.baseScores;
-    const coeff = this.bean.tempCoefficients;
+    const base = this.bean.evaluation.baseScores;
+    const coeff = this.bean.evaluation.tempCoefficients;
 
     let scores = {
       aroma: 0,
@@ -137,7 +137,7 @@ class RoastSimulation {
     else scores.aroma = Math.max(50, base.aroma - (finalTemp - 215) * 1.5); // 焦げると落ちる
 
     // 2. 風味 (Flavor): 豆ごとの理想温度との差分ペナルティ
-    const tempDiff = Math.abs(finalTemp - this.bean.optimalEndTemp);
+    const tempDiff = Math.abs(finalTemp - this.bean.hidden_state.optimalEndTemp);
     scores.flavor = Math.max(50, base.flavor - (tempDiff * 1.2));
 
     // 3. 酸味 (Acidity): 1ハゼ(200)で最大、その後焙煎が進むにつれ減少
@@ -198,7 +198,8 @@ class RoastSimulation {
     scores.overall = Math.round(sum / 7);
 
     return {
-      bean: this.bean.name,
+      bean: this.bean.descriptor.id,         // Changed from bean.name to id to align with JSON keys
+      beanName: this.bean.descriptor.name,   // Keep human-readable name available
       totalTimeSec: this.time,
       finalTemp: parseFloat(finalTemp.toFixed(1)),
       events: this.events,

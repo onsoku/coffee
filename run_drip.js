@@ -1,7 +1,15 @@
 const fs = require('fs');
+const path = require('path');
 const { DripSimulation } = require('./drip_simulation');
 
-const REPORT_FILE = 'drip_report.txt';
+const REPORTS_DIR = path.join(__dirname, 'data', 'reports');
+
+// Ensure output directories exist
+if (!fs.existsSync(REPORTS_DIR)) {
+  fs.mkdirSync(REPORTS_DIR, { recursive: true });
+}
+
+const REPORT_FILE = path.join(REPORTS_DIR, 'drip_report.txt');
 // 初期化
 fs.writeFileSync(REPORT_FILE, '', 'utf8');
 
@@ -60,7 +68,13 @@ process.on('exit', () => {
 });
 
 // ファイルから焙煎済みデータを検索してロードする（エチオピアの成功データを利用）
-const files = fs.readdirSync('./');
+const ROASTED_BEANS_DIR = path.join(__dirname, 'data', 'roasted_beans');
+if (!fs.existsSync(ROASTED_BEANS_DIR)) {
+  console.error(`エラー: ${ROASTED_BEANS_DIR} ディレクトリが見つかりません。先に run_simulation.js を実行してください。`);
+  process.exit(1);
+}
+
+const files = fs.readdirSync(ROASTED_BEANS_DIR);
 const targetFile = files.find(f => f.startsWith('roasted_bean_ethiopia_good') && f.endsWith('.json'));
 
 if (!targetFile) {
@@ -68,7 +82,7 @@ if (!targetFile) {
   process.exit(1);
 }
 
-const beanData = JSON.parse(fs.readFileSync(targetFile, 'utf8'));
+const beanData = JSON.parse(fs.readFileSync(path.join(ROASTED_BEANS_DIR, targetFile), 'utf8'));
 const sim = new DripSimulation(beanData);
 
 console.log(`=== 焙煎豆「${beanData.beanId} (${beanData.roastLevel})」を元に抽出テストを開始します ===\n`);

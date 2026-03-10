@@ -1,7 +1,17 @@
 const fs = require('fs');
+const path = require('path');
 const { RoastSimulation } = require('./simulation');
 
-const REPORT_FILE = 'report.txt';
+const REPORTS_DIR = path.join(__dirname, 'data', 'reports');
+const ROASTED_BEANS_DIR = path.join(__dirname, 'data', 'roasted_beans');
+const GRAPHS_DIR = path.join(__dirname, 'data', 'graphs');
+
+// Ensure output directories exist
+[REPORTS_DIR, ROASTED_BEANS_DIR, GRAPHS_DIR].forEach(dir => {
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+});
+
+const REPORT_FILE = path.join(REPORTS_DIR, 'report.txt');
 // 初期化
 fs.writeFileSync(REPORT_FILE, '', 'utf8');
 
@@ -13,7 +23,7 @@ function printReport(result, title) {
   output += '\n==================================================\n';
   output += `☕ ROASTING REPORT: ${title}\n`;
   output += '==================================================\n';
-  output += `■ 豆の種類 : ${result.bean}\n`;
+  output += `■ 豆の種類 : ${result.beanName}\n`;
   output += `■ 焙煎時間 : ${Math.floor(result.totalTimeSec / 60)}分 ${result.totalTimeSec % 60}秒\n`;
   output += `■ 終了温度 : ${result.finalTemp} °C\n`;
   output += '--------------------------------------------------\n';
@@ -72,7 +82,7 @@ function printReport(result, title) {
     roastProfile: result.history
   };
 
-  const jsonFilename = `roasted_bean_${title.replace(/[^a-zA-Z0-9]/g, '_')}_${result.totalTimeSec}s.json`;
+  const jsonFilename = path.join(ROASTED_BEANS_DIR, `roasted_bean_${title.replace(/[^a-zA-Z0-9]/g, '_')}_${result.totalTimeSec}s.json`);
   fs.writeFileSync(jsonFilename, JSON.stringify(jsonExport, null, 2), 'utf8');
 
   // Artisan風HTMLグラフレポートの生成
@@ -84,7 +94,7 @@ function printReport(result, title) {
  */
 function generateHtmlReport(data, title) {
   const safeTitle = title.replace(/[^a-zA-Z0-9]/g, '_');
-  const filename = `report_graph_${safeTitle}_${data.totalRoastTime}s.html`;
+  const filename = path.join(GRAPHS_DIR, `report_graph_${safeTitle}_${data.totalRoastTime}s.html`);
 
   const html = `<!DOCTYPE html>
 <html lang="ja">
