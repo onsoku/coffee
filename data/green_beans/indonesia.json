@@ -1,0 +1,29 @@
+{
+  "lotId": "indonesia",
+  "name": "インドネシア (マンデリン)",
+  "description": "重厚なボディ、スパイシーな風味、酸味が少ない。深煎り向け。",
+  "cultivation": {
+    "variety": "Typica, Ateng",
+    "altitude": "1300-1600m",
+    "region": "Sumatra",
+    "country": "Indonesia"
+  },
+  "processing": {
+    "processType": "Wet Hulled (Giling Basah)",
+    "dryingMethod": "Sun Drying"
+  },
+  "measured": {
+    "moisture_percent": { "value": 12.0, "source": "estimated" },
+    "water_activity": { "value": 0.62, "source": "estimated" },
+    "density_g_l": { "value": 660, "source": "estimated" }
+  },
+  "hidden_state": {
+    "optimalEndTemp": 230,
+    "thermal_mass_factor": 1.1,
+    "cell_wall_fragility": 0.9
+  },
+  "evaluation": {
+    "baseScores": { "aroma": 70, "flavor": 85, "acidity": 60, "body": 95, "sweetness": 75 },
+    "tempCoefficients": { "acidityDropRate": 1.5, "bodyGainRate": 1.3 }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "lotId": "brazil",
+  "name": "ブラジル",
+  "description": "ナッツのような香ばしさとバランスの取れた味わい。中煎り向け。",
+  "cultivation": {
+    "variety": "Mundo Novo, Catuai",
+    "altitude": "800-1200m",
+    "region": "Cerrado",
+    "country": "Brazil"
+  },
+  "processing": {
+    "processType": "Natural",
+    "dryingMethod": "Patio Drying"
+  },
+  "measured": {
+    "moisture_percent": { "value": 10.5, "source": "estimated" },
+    "water_activity": { "value": 0.53, "source": "estimated" },
+    "density_g_l": { "value": 680, "source": "estimated" }
+  },
+  "hidden_state": {
+    "optimalEndTemp": 215,
+    "thermal_mass_factor": 0.95,
+    "cell_wall_fragility": 1.0
+  },
+  "evaluation": {
+    "baseScores": { "aroma": 75, "flavor": 80, "acidity": 70, "body": 75, "sweetness": 85 },
+    "tempCoefficients": { "acidityDropRate": 1.0, "bodyGainRate": 1.0 }
+  }
+}

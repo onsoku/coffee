@@ -1,0 +1,29 @@
+{
+  "lotId": "guatemala",
+  "name": "グアテマラ",
+  "description": "チョコレートのような風味と複雑な味わい。中深煎り向け。",
+  "cultivation": {
+    "variety": "Bourbon, Caturra",
+    "altitude": "1600-2000m",
+    "region": "Antigua",
+    "country": "Guatemala"
+  },
+  "processing": {
+    "processType": "Washed",
+    "dryingMethod": "Patio Drying"
+  },
+  "measured": {
+    "moisture_percent": { "value": 10.8, "source": "estimated" },
+    "water_activity": { "value": 0.55, "source": "estimated" },
+    "density_g_l": { "value": 710, "source": "estimated" }
+  },
+  "hidden_state": {
+    "optimalEndTemp": 225,
+    "thermal_mass_factor": 1.05,
+    "cell_wall_fragility": 0.95
+  },
+  "evaluation": {
+    "baseScores": { "aroma": 80, "flavor": 85, "acidity": 80, "body": 80, "sweetness": 80 },
+    "tempCoefficients": { "acidityDropRate": 1.0, "bodyGainRate": 1.0 }
+  }
+}

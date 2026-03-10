@@ -1,0 +1,29 @@
+{
+  "lotId": "colombia",
+  "name": "コロンビア",
+  "description": "しっかりとしたコクとキャラメルのような甘さ。中深煎り向け。",
+  "cultivation": {
+    "variety": "Castillo, Caturra",
+    "altitude": "1500-1900m",
+    "region": "Huila",
+    "country": "Colombia"
+  },
+  "processing": {
+    "processType": "Washed",
+    "dryingMethod": "Parabolic Beds"
+  },
+  "measured": {
+    "moisture_percent": { "value": 11.2, "source": "estimated" },
+    "water_activity": { "value": 0.56, "source": "estimated" },
+    "density_g_l": { "value": 700, "source": "estimated" }
+  },
+  "hidden_state": {
+    "optimalEndTemp": 220,
+    "thermal_mass_factor": 1.0,
+    "cell_wall_fragility": 0.95
+  },
+  "evaluation": {
+    "baseScores": { "aroma": 75, "flavor": 85, "acidity": 75, "body": 85, "sweetness": 80 },
+    "tempCoefficients": { "acidityDropRate": 0.9, "bodyGainRate": 1.1 }
+  }
+}

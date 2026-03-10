@@ -1,0 +1,31 @@
+{
+  "lotId": "ethiopia",
+  "name": "エチオピア",
+  "description": "華やかな香りとフルーティーな酸味が特徴。浅煎り〜中浅煎り向け。",
+  "cultivation": {
+    "variety": "Heirloom",
+    "altitude": "1800-2200m",
+    "region": "Yirgacheffe",
+    "country": "Ethiopia"
+  },
+  "processing": {
+    "processType": "Washed",
+    "dryingMethod": "Raised Beds"
+  },
+  "measured": {
+    "moisture_percent": { "value": 11.2, "source": "estimated" },
+    "water_activity": { "value": 0.58, "source": "estimated" },
+    "density_g_l": { "value": 720, "source": "estimated" },
+    "screen_distribution": { "value": "14-15", "source": "estimated" },
+    "defect_count_350g": { "value": 3, "source": "estimated" }
+  },
+  "hidden_state": {
+    "optimalEndTemp": 205,
+    "thermal_mass_factor": 1.0,
+    "cell_wall_fragility": 1.1
+  },
+  "evaluation": {
+    "baseScores": { "aroma": 90, "flavor": 85, "acidity": 95, "body": 60, "sweetness": 80 },
+    "tempCoefficients": { "acidityDropRate": 1.2, "bodyGainRate": 0.8 }
+  }
+}
