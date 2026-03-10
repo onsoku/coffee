@@ -7,7 +7,18 @@
 ## 1. 収録されているコーヒー豆の種類と特性
 
 シミュレーションでは、産地ごとに異なる焙煎特性（ポテンシャルスコア、熱による成分変化のしやすさ）を持つ5種類の代表的な豆を定義しています。
+これらの生豆データは、SCA基準や農学的視点を包括したユニバーサルな **`GreenCoffeeLot` クラス** として設計・インスタンス化されています。
 
+### 1.1 `GreenCoffeeLot` のデータレイヤー構造
+各豆のデータは、シミュレーションエンジンが将来の拡張に対応できるよう、以下のレイヤーに分離されています。
+*   **`descriptor`**: コーヒーの基本情報（ID、名称、概要）
+*   **`cultivation`**: `CultivationProfile` クラス。農学情報（品種、標高帯、地域など）
+*   **`processing`**: `ProcessingProfile` クラス。精製プロセス情報（精製手法、乾燥方法）
+*   **`measured`**: SCA基準に基づく品質観測値。`value` と `source` (実測値か推定値か) のペアで保持。（水分量 `moisture_percent`、水分活性 `water_activity`、密度 `density_g_l` 等）
+*   **`hidden_state`**: 物理シミュレーション専用の潜在変数（熱伝導率 `thermal_mass_factor`、理想到達温度 `optimalEndTemp` など）
+*   **`evaluation`**: SCA準拠カッピング評価計算用のベーススコアと温度係数
+
+### 1.2 プリセット豆プロファイル概要
 | 豆の種類 (ID) | 理想的な焙煎度 | 理想終了温度 | 特徴・シミュレーション上の性質 |
 | :--- | :--- | :--- | :--- |
 | **エチオピア** (`ethiopia`) | 浅煎り〜中浅煎り | 205 ℃ (1ハゼ直後) | 華やかな香りとフルーティーな酸味が特徴。<br>・**酸味**の初期ポテンシャルが非常に高い(95)。<br>・焙煎が進むと酸味が**早く失われる** (DropRate: 1.2)。<br>・深煎りにしてもボディは増えにくい (GainRate: 0.8)。 |
@@ -92,12 +103,13 @@ const customProfile = [
   { time: 500, power: 45 },  // 500秒(8分20秒)〜: 1ハゼ前に弱火(45)に落とす
 ];
 
-// 実行: (豆のID, 終了秒数)
-const sim = new RoastSimulation('ethiopia'); // エチオピア豆を選択
+// 実行: (豆のインスタンス, 終了秒数)
+const sim = new RoastSimulation(beanTypes.ethiopia); // エチオピア豆インスタンスを選択
 const result = sim.run(customProfile, 660); // 11分 (660秒) で網から下ろす
 
 // 出力関数に渡す
-printReport(result, "カスタムテスト: エチオピア 11分焙煎");
+printReport(result, "カスタムテスト_エチオピア11分");
 ```
 
-このファイルを修正し、コマンドラインで `node run_simulation.js` を実行することで、新しいテストパターンのレポートが `report.txt` に追記されます。
+このファイルを修正し、コマンドラインで `node run_simulation.js` を実行することで、新しいテストパターンのレポートが `data/reports/report.txt` に追記されます。
+また、出力された焙煎済み豆データは `data/roasted_beans/` にJSONとして、焙煎グラフは `data/graphs/` にHTMLとして生成されます。
