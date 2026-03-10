@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { beanTypes } = require('./beans');
 const { RoastSimulation } = require('./simulation');
 
 const REPORTS_DIR = path.join(__dirname, 'data', 'reports');
@@ -272,7 +273,7 @@ const ethiopiaGoodProfile = [
   { time: 300, power: 60 }, // 5分で少し火を弱める(水分が抜け切り熱が入りやすくなるため)
   { time: 500, power: 50 }, // 1ハゼが近づいたらさらに弱める
 ];
-const sim1 = new RoastSimulation('ethiopia');
+const sim1 = new RoastSimulation(beanTypes.ethiopia);
 const result1 = sim1.run(ethiopiaGoodProfile, 11 * 60 + 30); // 11分30秒で引き上げ
 printReport(result1, "ethiopia_good");
 
@@ -282,7 +283,7 @@ const mandhelingGoodProfile = [
   { time: 360, power: 55 },
   { time: 600, power: 45 }, // ゆっくり熱を入れる
 ];
-const sim2 = new RoastSimulation('indonesia');
+const sim2 = new RoastSimulation(beanTypes.indonesia);
 const result2 = sim2.run(mandhelingGoodProfile, 14 * 60); // 14分で引き上げ
 printReport(result2, "mandheling_good");
 
@@ -290,7 +291,7 @@ printReport(result2, "mandheling_good");
 const scorchedProfile = [
   { time: 0, power: 100 }, // 手網でずっと全開
 ];
-const sim3 = new RoastSimulation('brazil');
+const sim3 = new RoastSimulation(beanTypes.brazil);
 const result3 = sim3.run(scorchedProfile, 7 * 60); // 7分で終了
 printReport(result3, "brazil_scorched");
 
@@ -298,6 +299,6 @@ printReport(result3, "brazil_scorched");
 const bakedProfile = [
   { time: 0, power: 30 }, // ずっと弱火
 ];
-const sim4 = new RoastSimulation('colombia');
+const sim4 = new RoastSimulation(beanTypes.colombia);
 const result4 = sim4.run(bakedProfile, 20 * 60); // 20分かかる
 printReport(result4, "colombia_baked");

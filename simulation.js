@@ -5,11 +5,11 @@
 const { beanTypes } = require('./beans');
 
 class RoastSimulation {
-  constructor(beanId) {
-    if (!beanTypes[beanId]) {
-      throw new Error(`Unknown bean type: ${beanId}`);
+  constructor(beanInstance) {
+    if (!beanInstance || !beanInstance.descriptor) {
+      throw new Error("A valid GreenCoffeeLot instance is required.");
     }
-    this.bean = beanTypes[beanId];
+    this.bean = beanInstance;
     
     // シミュレーションの状態 (初期値: 室温25度)
     this.bt = 25; // Bean Temperature (豆温度)
