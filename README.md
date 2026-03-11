@@ -1,67 +1,71 @@
-# Coffee Roasting Simulation (手網焙煎シミュレーター)
+🌐 **English | [日本語](README.ja.md)** 
 
-## 概要 (Overview)
-このプロジェクトは、コーヒーの「手網焙煎」における物理的な温度変化と成分変化をシミュレートし、最終的なSCA簡易カッピングスコアを算出するCLI検証用エンジンです。
+# Coffee Roasting Simulation (Hand-Roasting Simulator)
 
-UIを持たないNode.jsスクリプトとして設計されており、カスタムの火力プロファイルを実行することで、焙煎の成功・失敗（ベイクドやスコーチなど）を仮想的にテストできます。また、焙煎結果は他システム（自動ドリップマシンのシミュレーション等）と連携できるように、プロの現場で用いられるデファクトスタンダードに近い構造のJSONデータと、視覚的なHTMLグラフとして出力されます。
+## Overview
+This project is a CLI engine for testing and simulating the physical temperature changes and chemical development within coffee beans during "hand roasting", ultimately calculating an SCA (Specialty Coffee Association) simplified cupping score.
 
-## 機能 (Features)
-*   **物理シミュレーション**: 乾燥フェーズの吸熱やハゼ（クラック）による発熱を考慮した1秒ごとの熱伝達モデル。
-*   **SCA簡易評価**: 香り・風味・後味・酸味・ボディ・甘さ・クリーンカップの7項目を各100点スケールで評価する評価エンジン。
-*   **無制限の豆データ (Data-Driven)**: 初期データとして5種類の豆（エチオピア、ブラジル等）が `data/green_beans/*.json` に格納されており、自分でJSONを追加することでオリジナルの豆を無制限にシミュレート可能。
-*   **欠点（デフェクト）判定**: 「焦げ（Scorched）」「生焼け（Baked）」「未発達（Underdeveloped）」の自動判定とペナルティ計算。
-*   **レポート出力**:
-    *   **テキストレポート** (`data/reports/report.txt`): コンソール上の実行結果ログ。
-    *   **データ連携用JSON** (`data/roasted_beans/roasted_bean_*.json`): 10秒ごとの温度遷移（BT/ET/RoR）配列を含むユニバーサルな焙煎仕様データ。
-    *   **Artisan風グラフレポート** (`data/graphs/report_graph_*.html`): Chart.jsを使った美しく直感的なテレメトリー＆スコアグラフ。
+Designed as a headless Node.js script, it allows you to execute custom heat application profiles to virtually test roasting successes and failures (like Baked or Scorched). The roasting results are output in two forms: a universally structured JSON format intended for integration with other systems (like automatic drip machine simulators), and a visually intuitive HTML graph.
 
-## 使い方 (Usage)
+## Features
+*   **Physical Simulation**: A second-by-second heat transfer model that accounts for endothermic reactions during the drying phase and exothermic reactions during cracks.
+*   **SCA Simplified Evaluation**: An evaluation engine that scores Aroma, Flavor, Aftertaste, Acidity, Body, Sweetness, and Clean Cup on a 100-point scale.
+*   **Infinite Bean Data (Data-Driven)**: Comes pre-loaded with 5 base bean profiles (Ethiopia, Brazil, etc.) stored as JSON files in `data/green_beans/*.json`. You can easily add your own JSON files to simulate an unlimited variety of original beans.
+*   **Defect Detection**: Automatically identifies roasting defects like "Scorched", "Baked", and "Underdeveloped", applying the appropriate penalties to the final cup score.
+*   **Report Generation**:
+    *   **Text Report** (`data/reports/report.txt`): A console-friendly execution log.
+    *   **Data Integration JSON** (`data/roasted_beans/roasted_bean_*.json`): Universal roasting specification data containing arrays of 10-second interval temperature transitions (BT/ET/RoR).
+    *   **Artisan-style Graph Report** (`data/graphs/report_graph_*.html`): Beautiful, intuitive telemetry & score graphs using Chart.js.
+*   **i18n Support**: CLI outputs and Text Reports can be toggled between English and Japanese via `config.js`.
 
-Node.js環境が必要です。
+## Usage
 
-1.  プロジェクトをクローンまたはダウンロードし、ディレクトリを開きます。
-2.  以下のコマンドでシミュレーションを実行します。
+A Node.js environment is required.
+
+1.  Clone or download the project and open the directory.
+2.  Run the simulation with the following command:
     ```bash
     node run_simulation.js
     ```
-3.  実行後、4パターンのテスト焙煎（エチオピア成功、マンデリン成功、ブラジル失敗、コロンビア失敗）が自動で行われ、結果ファイルが生成されます。
+3.  After execution, 4 test roast patterns (Ethiopia Good, Mandheling Good, Brazil Failure, Colombia Failure) will be automatically run, and result files will be generated.
 
-### カスタム焙煎プロファイルの作成
-`run_simulation.js` の末尾にある実行ケースを編集することで、自分だけの焙煎をシミュレートできます。
+### Creating a Custom Roast Profile
+You can simulate your own roast by editing the execution cases at the end of `run_simulation.js`.
 
 ```javascript
-// 例：新しいプロファイルの作成
+// Example: Creating a new profile
 const customProfile = [
-  { time: 0, power: 80 },    // 0秒〜: 強火(80)でスタート
-  { time: 300, power: 60 },  // 5分〜: 中火(60)
-  { time: 500, power: 45 },  // 8分20秒〜:弱火(45)
+  { time: 0, power: 80 },    // 0s~: Start with High Heat (80)
+  { time: 300, power: 60 },  // 5m~: Medium Heat (60)
+  { time: 500, power: 45 },  // 8m20s~: Low Heat before 1st crack (45)
 ];
 
 const { loadBean } = require('./beans');
 
-// 実行: `data/green_beans/` にあるJSONファイル名（拡張子なし）を指定
+// Execution: Specify the name of a JSON file in `data/green_beans/` (without the extension)
 const sim = new RoastSimulation(loadBean('ethiopia')); 
-const result = sim.run(customProfile, 660); // 11分 (660秒) で焙煎終了
+const result = sim.run(customProfile, 660); // End roast at 11 minutes (660 seconds)
 
-printReport(result, "カスタム焙煎テスト");
+printReport(result, "Custom Roast Test");
 ```
 
-## ドキュメント (Documentation)
-焙煎の物理計算の仕組みや、どの温度でどのスコアが変動するかといった詳細な仕様については、[REFERENCE_MANUAL.md](./REFERENCE_MANUAL.md) をご参照ください。
+## Documentation
+For detailed specifications on how the physical roasting calculations work, and which temperatures affect which scores, please refer to the [REFERENCE_MANUAL.md](./REFERENCE_MANUAL.md).
 
-## Phase 2: コーヒー抽出（ドリップ）シミュレーター
-焙煎済みの豆データ（JSON）を読み込み、実際のお湯の温度や抽出時間などのレシピに基づくカッピングスコアの変化をシミュレートする機能が追加されています（v2）。
+## Phase 2: Coffee Extraction (Drip) Simulator
+Added in v2 is the ability to load pre-roasted bean data (JSON) and simulate how the cupping score changes based on extraction recipes, such as actual water temperature and brew time.
 
-### 抽出シミュレーションの使い方
-1. 先行して `run_simulation.js` を実行し、焙煎済みのJSONファイル（例：`roasted_bean_ethiopia_good_...json`）を生成しておきます。
-2. 以下のコマンドを実行します。
+### How to Use the Drip Simulator
+1. First, run `run_simulation.js` to ensure pre-roasted JSON files (e.g., `roasted_bean_ethiopia_good_...json`) are generated in the data directory.
+2. Run the following command:
     ```bash
     node run_drip.js
     ```
-3. スクリプトが4パターンの抽出レシピ（理想、未抽出、過抽出、濃いめ）をテストし、それぞれの場合の `EY（収率）` と `TDS（濃度）`、および変化した味覚スコアを `data/reports/drip_report.txt` およびコンソールに出力します。
+3. The script will test 4 extraction recipe patterns (Ideal, Under-extracted, Over-extracted, Strong) and output the resulting `EY (Extraction Yield)` and `TDS (Total Dissolved Solids)`, along with the adjusted flavor scores, to `data/reports/drip_report.txt` and the console.
 
-`run_drip.js` を編集して、水温(`waterTemp`)を少し下げてみたり、抽出時間(`brewTime`)を長くしてみたりすると、コーヒーの味がどのように変化するかのシミュレーションを楽しめます。
+By editing `run_drip.js` to lower the water temperature (`waterTemp`) or increase the brew time (`brewTime`), you can experience a simulation of how the coffee's flavor profile changes.
 
 ## Version
-*   `v2.0.0` - ドリップ・シミュレーション機能（EY/TDS計算エンジン）追加
-*   `v1.0.0` - 手網焙煎コアロジック、JSONエクスポート、HTMLグラフ出力完成版
+*   `v2.1.0` - Added i18n support for running reports and outputs in English/Japanese.
+*   `v2.0.0` - Added Drip Simulation (EY/TDS calculation engine)
+*   `v1.0.0` - Hand-roasting core logic, JSON export, HTML graph output

@@ -1,129 +1,131 @@
-# 手網コーヒー焙煎シミュレーション リファレンスマニュアル
+🌐 **English | [日本語](REFERENCE_MANUAL.ja.md)** 
 
-このドキュメントは、本シミュレーションエンジンにおけるコーヒー豆の特性、焙煎の物理モデル、およびSCA（Specialty Coffee Association）に準拠した簡易カッピング評価の算出ロジックを解説するマニュアルです。
+# Hand-Roasting Coffee Simulation Reference Manual
 
----
-
-## 5. 言語設定 (i18n) の変更
-バージョンアップに伴い、シミュレーション出力結果のレポートやコマンドライン上のメッセージについて、**日本語(ja) / 英語(en)** の切り替えが可能になりました。
-
-1. プロジェクトルートにある `config.js` を開きます。
-2. `language: "ja"` の部分を `language: "en"` に書き換えて保存します。
-3. `node run_simulation.js` や `node run_drip.js` を実行すると、設定した言語の辞書（`locales/en.json` または `locales/ja.json`）を参照し、レポートが出力されます。
-
-※ 注意: シミュレーション結果として保存される焙煎豆などの「データ（JSONファイル）」自体の構造やプロパティ名（英字）は変更されません。レポートの表示ラベルのみが切り替わります。
+This document is a manual explaining the characteristics of coffee beans, the physical model of roasting, and the calculation logic for the simplified cupping evaluation based on SCA (Specialty Coffee Association) standards within this simulation engine.
 
 ---
 
-## 1. 収録されているコーヒー豆の種類と特性
+## 5. Changing Language Settings (i18n)
+With the version update, you can now toggle the simulation output reports and command-line messages between **Japanese (ja) / English (en)**.
 
-シミュレーションでは、産地ごとに異なる焙煎特性を持つ5種類の代表的な豆を同梱しています。
-これらの生豆データは `data/green_beans/` フォルダ内の個別の JSON ファイルとしてデータ駆動（Data-Driven）で管理されており、SCA基準や農学的視点を包括したユニバーサルな **`GreenCoffeeLot` クラス** として動的にインスタンス化（`loadBean()`）されます。
-このディレクトリに新しい JSON ファイルを追加するだけで、ソースコードをいじらずに未知のオリジナル豆をシミュレーションにかけることが可能です（農園・農法シミュレーターなどの外部ツール出力との連携を想定）。
+1. Open `config.js` located in the project root.
+2. Change the `language: "ja"` part to `language: "en"` and save.
+3. When you run `node run_simulation.js` or `node run_drip.js`, the report will be output referencing the configured language dictionary (`locales/en.json` or `locales/ja.json`).
 
-### 1.1 `GreenCoffeeLot` のデータレイヤー構造
-各豆のデータは、シミュレーションエンジンが将来の拡張に対応できるよう、以下のレイヤーに分離されています。
-*   **`descriptor`**: コーヒーの基本情報（ID、名称、概要）
-*   **`cultivation`**: `CultivationProfile` クラス。農学情報（品種、標高帯、地域など）
-*   **`processing`**: `ProcessingProfile` クラス。精製プロセス情報（精製手法、乾燥方法）
-*   **`measured`**: SCA基準に基づく品質観測値。`value` と `source` (実測値か推定値か) のペアで保持。（水分量 `moisture_percent`、水分活性 `water_activity`、密度 `density_g_l` 等）
-*   **`hidden_state`**: 物理シミュレーション専用の潜在変数（熱伝導率 `thermal_mass_factor`、理想到達温度 `optimalEndTemp` など）
-*   **`evaluation`**: SCA準拠カッピング評価計算用のベーススコアと温度係数
+*Note: The structure and property names (English characters) of the "data (JSON files)" such as roasted beans saved as simulation results will not be changed. Only the display labels in the reports will switch.*
 
-### 1.2 プリセット豆プロファイル概要
-| 豆の種類 (ID) | 理想的な焙煎度 | 理想終了温度 | 特徴・シミュレーション上の性質 |
+---
+
+## 1. Included Coffee Bean Types and Characteristics
+
+The simulation bundles 5 representative types of beans, each with different roasting characteristics based on their origin.
+These green bean data are managed in a data-driven way as individual JSON files in the `data/green_beans/` folder, and are dynamically instantiated (`loadBean()`) as a universal **`GreenCoffeeLot` class** that encompasses SCA standards and agricultural perspectives.
+By simply adding a new JSON file to this directory, you can run simulations on unknown, original beans without touching the source code (intended for integration with outputs from external tools like farm/agricultural simulators).
+
+### 1.1 `GreenCoffeeLot` Data Layer Structure
+The data for each bean is separated into the following layers to allow the simulation engine to adapt to future expansions.
+*   **`descriptor`**: Basic coffee information (ID, name, overview)
+*   **`cultivation`**: `CultivationProfile` class. Agricultural information (variety, altitude band, region, etc.)
+*   **`processing`**: `ProcessingProfile` class. Processing information (method, drying method)
+*   **`measured`**: Quality observation values based on SCA standards. Stored as pairs of `value` and `source` (actual measurement or estimate). (Moisture content `moisture_percent`, water activity `water_activity`, density `density_g_l`, etc.)
+*   **`hidden_state`**: Latent variables exclusively for physical simulation (thermal conductivity `thermal_mass_factor`, ideal target temperature `optimalEndTemp`, etc.)
+*   **`evaluation`**: Base scores and temperature coefficients for SCA-compliant cupping evaluation calculations
+
+### 1.2 Preset Bean Profile Overview
+| Bean Type (ID) | Ideal Roast Level | Ideal End Temp | Characteristics / Simulation Properties |
 | :--- | :--- | :--- | :--- |
-| **エチオピア** (`ethiopia`) | 浅煎り〜中浅煎り | 205 ℃ (1ハゼ直後) | 華やかな香りとフルーティーな酸味が特徴。<br>・**酸味**の初期ポテンシャルが非常に高い(95)。<br>・焙煎が進むと酸味が**早く失われる** (DropRate: 1.2)。<br>・深煎りにしてもボディは増えにくい (GainRate: 0.8)。 |
-| **ブラジル** (`brazil`) | 中煎り | 215 ℃ (1ハゼ〜2ハゼ間) | ナッツのような香ばしさとバランスの取れた味わい。<br>・すべてのステータスが平均的で**バランスが良い**。<br>・甘さの初期ポテンシャルがやや高い(85)。 |
-| **コロンビア** (`colombia`) | 中深煎り | 220 ℃ (2ハゼ開始付近) | しっかりとしたコクとキャラメルのような甘さ。<br>・**ボディ**と**風味**のベーススコアが高い(85)。<br>・焙煎が進んでも酸味が飛びにくい (DropRate: 0.9)。<br>・熱を入れるとボディが綺麗に増していく (GainRate: 1.1)。 |
-| **インドネシア** (`indonesia`) | 深煎り (マンデリン) | 230 ℃ (2ハゼ中・後半) | 重厚なボディ、スパイシーな風味、酸味が少ない。<br>・**ボディ**のポテンシャルが圧倒的に高い(95)。<br>・浅煎り状態では酸味がほとんど評価されない (DropRate: 1.5)。<br>・熱を入れることで**急激にボディが増す** (GainRate: 1.3)。 |
-| **グアテマラ** (`guatemala`) | 中深煎り | 225 ℃ (2ハゼ前後) | チョコレートのような風味と複雑な味わい。<br>・コロンビアと似ているが、より香り(80)と酸味(80)のベースが高い。<br>・各ステータスの変化率は標準的(1.0)。 |
+| **Ethiopia** (`ethiopia`) | Light to Medium-Light | 205 ℃ (Right after 1st crack) | Characterized by floral aroma and fruity acidity.<br>・Very high initial potential for **Acidity** (95).<br>・Acidity is **lost quickly** as roasting progresses (DropRate: 1.2).<br>・Body is hard to increase even with dark roasting (GainRate: 0.8). |
+| **Brazil** (`brazil`) | Medium | 215 ℃ (Between 1st & 2nd crack) | Nutty aroma and a well-balanced taste.<br>・All stats are average and **well-balanced**.<br>・Initial potential for Sweetness is slightly high (85). |
+| **Colombia** (`colombia`) | Medium-Dark | 220 ℃ (Around start of 2nd crack) | Solid body and caramel-like sweetness.<br>・High base scores for **Body** and **Flavor** (85).<br>・Acidity is hard to lose even as roasting progresses (DropRate: 0.9).<br>・Body increases beautifully as heat is applied (GainRate: 1.1). |
+| **Indonesia** (`indonesia`) | Dark (Mandheling) | 230 ℃ (Middle/Late 2nd crack) | Heavy body, spicy flavor, low acidity.<br>・Overwhelmingly high potential for **Body** (95).<br>・Acidity is barely evaluated in a light roast state (DropRate: 1.5).<br>・**Body increases rapidly** as heat is applied (GainRate: 1.3). |
+| **Guatemala** (`guatemala`) | Medium-Dark | 225 ℃ (Around 2nd crack) | Chocolate-like flavor and complex taste.<br>・Similar to Colombia, but with higher base Aroma (80) and Acidity (80).<br>・Change rates for each stat are standard (1.0). |
 
 ---
 
-## 2. 焙煎プロセスの物理モデル
+## 2. Physical Model of the Roasting Process
 
-焙煎シミュレーションは **1秒＝1Tick** で計算され、入力された「火力 (`power`: 0〜100)」をもとに熱伝達による豆の温度 (`BT`: Bean Temperature) の上昇をモデル化しています。
+The roasting simulation is calculated at **1 second = 1 Tick**, modeling the increase in Bean Temperature (`BT`) due to heat transfer based on the input "Heat Power (`power`: 0-100)".
 
-### 2.1 熱伝達の基本式
-1.  **環境温度 (EnvTemp) の計算**
-    手網を振るコンロの上の空気温度です。最大火力 (100) で約405℃に達すると仮定しています。火力変更時は、遅延を伴って EnvTemp が目標値へ漸近します。
-2.  **RoR (Rate of Rise: 温度上昇率) の計算**
-    現在の環境温度と豆の温度の差分（ニュートンの冷却の法則）に基づいて、1秒間に豆の温度が何度上がるかを計算します。
+### 2.1 Basic Heat Transfer Formula
+1.  **Calculating Environment Temperature (EnvTemp)**
+    This is the air temperature above the stove where the hand roaster is shaken. It is assumed to reach a maximum of about 405℃ at maximum power (100). When the power is changed, EnvTemp approaches the target value with a delay.
+2.  **Calculating RoR (Rate of Rise)**
+    Calculates how many degrees the bean temperature will rise per second based on the difference between the current environment temperature and the bean temperature (Newton's law of cooling).
     `RoR = (EnvTemp - BT) * 0.005`
 
-### 2.2 焙煎フェーズと化学反応（吸熱・発熱）
-焙煎中の豆の温度帯によって、内部の化学反応によるRoRの補正がかかります。
+### 2.2 Roasting Phases and Chemical Reactions (Endothermic/Exothermic)
+Depending on the temperature zone of the beans during roasting, corrections are applied to the RoR to account for internal chemical reactions.
 
-*   **乾燥フェーズ (100℃ 〜 150℃)**
-    豆の内部の水分が蒸発するフェーズです。蒸発による気化熱で熱が奪われるため、**温度上昇が鈍くなります** (`RoR * 0.7`)。火力不足だとここで大幅に時間をロスします。
-*   **メイラード反応 (150℃ 〜 200℃)**
-    豆が黄色から茶色へ色づき、香ばしい成分と甘さが形成される重要なフェーズです。
-*   **第1クラック / 1ハゼ (200℃付近)**
-    豆内部の水分が気化膨張し、細胞壁が破裂して「パチパチ」と鳴るポイントです。この直後、豆自体が熱エネルギーを放出するタイミングがあり、一時的に**温度上昇が加速**します (`RoR * 1.2`)。
-*   **第2クラック / 2ハゼ (225℃付近)**
-    さらに焙煎が進み、豆の組織がさらに破壊されガスが噴出、「ピチピチ」と鳴るポイントです。深煎りの入り口となります。
+*   **Drying Phase (100℃ - 150℃)**
+    The phase where the moisture inside the bean evaporates. Because heat is taken away by the heat of vaporization, **the temperature rise slows down** (`RoR * 0.7`). If the heat is insufficient, significant time is lost here.
+*   **Maillard Reaction (150℃ - 200℃)**
+    An important phase where the beans change from yellow to brown, and aromatic compounds and sweetness are formed.
+*   **First Crack (Around 200℃)**
+    The point where the moisture inside the bean vaporizes and expands, causing the cell walls to burst and emit a "popping" sound. Right after this, there is a moment when the beans themselves release heat energy, temporarily **accelerating the temperature rise** (`RoR * 1.2`).
+*   **Second Crack (Around 225℃)**
+    As roasting progresses further, the bean structure is further destroyed and gas erupts, creating a "snapping" sound. This marks the entrance to a dark roast.
 
 ---
 
-## 3. SCA簡易カップ評価モデルと採点ロジック
+## 3. SCA Simplified Cupping Evaluation Model and Scoring Logic
 
-焙煎終了時のデータ（最終温度、焙煎時間、イベント到達有無）から、SCA基準に沿った7項目（各100点満点）と総合評価を算出します。
+From the data at the end of roasting (final temperature, roasting time, event achievement status), 7 items (100 points maximum each) and an overall evaluation are calculated according to SCA standards.
 
-### 3.1 各採点項目のメカニズム
+### 3.1 Mechanism of Each Scoring Item
 
-1.  **香り (Aroma)**
-    *   **ピーク温度:** 215℃付近 (1ハゼ〜2ハゼの中間)
-    *   **計算:** 未発達(150℃未満)では極端に低く、215℃に向かって一気に上昇。それを超えて焦げ始めると減少します。
-2.  **風味 (Flavor)**
-    *   **メカニズム:** その豆が最も個性を発揮する「理想終了温度 (Optimal End Temp)」にいかに近いかで評価されます。
-    *   **計算:** `豆のベース風味スコア - (最終温度と理想温度の差分 * 1.2)`
-3.  **酸味 (Acidity)**
-    *   **ピーク温度:** 200℃ (1ハゼ開始時)
-    *   **計算:** 1ハゼをピークとし、豆の温度がそこから上がるごとに、豆由来の減少率 (`DropRate`) に従って減少します。
-    *   *注:* エチオピアのようにベースが高く減少しやすい豆と、もともと酸味が無い豆で差が出ます。
-4.  **ボディ (Body) / 口当たり**
-    *   **ピーク温度:** 225℃以降 (2ハゼ〜深煎り)
-    *   **計算:** 190℃以降、焙煎が進むにつれて豆の増加率 (`GainRate`) に従ってスコアが成長します。
-5.  **甘さ (Sweetness)**
-    *   **ピーク温度:** 210℃ (デベロップメントフェーズの中盤)
-    *   **計算:** カラメル化が最もバランスよく行われる210℃にどのくらい近いかで算出されます。
-6.  **クリーンカップ (Clean Cup) & 後味 (Aftertaste)**
-    *   **メカニズム:** 焙煎の「欠点（デフェクト）」が出た場合にのみ、この2項目から大幅に減点されます（初期値は100）。
+1.  **Aroma**
+    *   **Peak Temp:** Around 215℃ (between 1st and 2nd crack)
+    *   **Calculation:** Extremely low if underdeveloped (under 150℃), and rises sharply towards 215℃. Decreases if it starts burning beyond that.
+2.  **Flavor**
+    *   **Mechanism:** Evaluated by how close it is to the "Optimal End Temp" where the bean best displays its uniqueness.
+    *   **Calculation:** `Base Flavor Score - (Difference between final temp and ideal temp * 1.2)`
+3.  **Acidity**
+    *   **Peak Temp:** 200℃ (start of 1st crack)
+    *   **Calculation:** Peaks at 1st crack, and decreases according to the bean's specific decrease rate (`DropRate`) as the bean's temperature rises from there.
+    *   *Note:* Creates a difference between beans with a high base that decrease easily like Ethiopia, and beans that originally have no acidity.
+4.  **Body / Mouthfeel**
+    *   **Peak Temp:** 225℃ and above (2nd crack to dark roast)
+    *   **Calculation:** From 190℃ onwards, the score grows according to the bean's increase rate (`GainRate`) as roasting progresses.
+5.  **Sweetness**
+    *   **Peak Temp:** 210℃ (Middle of the development phase)
+    *   **Calculation:** Calculated based on how close it is to 210℃, where caramelization occurs most balancedly.
+6.  **Clean Cup & Aftertaste**
+    *   **Mechanism:** Points are heavily deducted from these two items only when roasting "defects" occur (initial value is 100).
 
-### 3.2 焙煎の欠点（デフェクト）判定
+### 3.2 Roasting Defect Detection
 
-シミュレーションでは、不適切な火加減により以下の3つのアラート状態に陥ります。
+In the simulation, improper heat control leads to the following 3 alert states.
 
-| アラート | 発生条件 | ペナルティ | 味覚への影響 |
+| Alert | Trigger Condition | Penalty | Impact on Taste |
 | :--- | :--- | :--- | :--- |
-| **⚠️ 未発達 (Underdeveloped)** | 焙煎終了時に **195℃** に達していない状態。 | クリーンカップ -30<br>後味 -20 | 豆の中まで火が通っておらず、青臭い渋みや不快な酸が残る状態。すべてにおいて低評価になる。 |
-| **🥱 ベイクド (Baked)** | 総焙煎時間が **16分 (960秒)** を超えてしまった状態。 | 後味 -15<br>風味＆酸味 -10 | 火力が弱すぎて焙煎に時間がかかりすぎ、香りや酸味といった風味が揮発して飛んでしまい、つまらない味になっている状態。 |
-| **🔥 スコーチ (Scorched)** | 豆の温度上昇率(RoR)が **1.5℃/秒** を超過した状態。（急激すぎる温度上昇） | クリーンカップ -40<br>後味 -30<br>香り＆風味 -20 | 火力が強すぎて表面だけが焦げてしまった状態。強烈な焦げ味と、いつまでも残る不快な後味により評価が崩壊する。 |
+| **⚠️ Underdeveloped** | The state where **195℃** is not reached by the end of roasting. | Clean Cup -30<br>Aftertaste -20 | The inside of the bean is not cooked through, leaving a grassy astringency or unpleasant sourness. Low evaluation across the board. |
+| **🥱 Baked** | The state where total roasting time exceeds **16 minutes (960 seconds)**. | Aftertaste -15<br>Flavor & Acidity -10 | Heat was too low and roasting took too long, causing flavors like aroma and acidity to volatilize and disappear, resulting in a dull taste. |
+| **🔥 Scorched** | The state where the bean's Rate of Rise (RoR) exceeds **1.5℃/sec**. (Too rapid temperature rise) | Clean Cup -40<br>Aftertaste -30<br>Aroma & Flavor -20 | Heat was too strong, resulting in only the surface being burned. Severe burnt taste and a lingering unpleasant aftertaste destroy the evaluation. |
 
 ---
 
-## 4. テストプロファイルの書き方
+## 4. How to Write a Test Profile
 
-CLIスクリプト (`run_simulation.js`) にて、自作の火力プロファイルを定義することで、様々な焙煎をテストできます。
+You can test various roasts by defining your own heat profiles in the CLI script (`run_simulation.js`).
 
 ```javascript
-// プロファイルの例: 「火力を時間で切り替える」
+// Profile Example: "Switching heat over time"
 const customProfile = [
-  { time: 0, power: 80 },    // 0秒〜: 強火(80)でスタート
-  { time: 300, power: 60 },  // 300秒(5分)〜: 中火(60)に落とす
-  { time: 500, power: 45 },  // 500秒(8分20秒)〜: 1ハゼ前に弱火(45)に落とす
+  { time: 0, power: 80 },    // 0s~: Start with High Heat (80)
+  { time: 300, power: 60 },  // 300s(5m)~: Drop to Medium Heat (60)
+  { time: 500, power: 45 },  // 500s(8m20s)~: Drop to Low Heat before 1st crack (45)
 ];
 
 const { loadBean } = require('./beans');
 
-// 実行: (豆のインスタンスをJSONから生成, 終了秒数)
-const sim = new RoastSimulation(loadBean('ethiopia')); // エチオピア豆のJSONを読み込み
-const result = sim.run(customProfile, 660); // 11分 (660秒) で網から下ろす
+// Execution: (Generate bean instance from JSON, end seconds)
+const sim = new RoastSimulation(loadBean('ethiopia')); // Load Ethiopia bean JSON
+const result = sim.run(customProfile, 660); // Remove from stove at 11 minutes (660 seconds)
 
-// 出力関数に渡す
-printReport(result, "カスタムテスト_エチオピア11分");
+// Pass to output function
+printReport(result, "CustomTest_Ethiopia_11m");
 ```
 
-このファイルを修正し、コマンドラインで `node run_simulation.js` を実行することで、新しいテストパターンのレポートが `data/reports/report.txt` に追記されます。
-また、出力された焙煎済み豆データは `data/roasted_beans/` にJSONとして、焙煎グラフは `data/graphs/` にHTMLとして生成されます。
+By modifying this file and running `node run_simulation.js` on the command line, reports for your new test patterns will be appended to `data/reports/report.txt`.
+Additionally, the output roasted bean data is generated as a JSON in `data/roasted_beans/`, and the roasting graph is generated as HTML in `data/graphs/`.
