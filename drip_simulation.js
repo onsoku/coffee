@@ -1,3 +1,6 @@
+const path = require('path');
+const { t } = require('./i18n');
+
 /**
  * コーヒーのドリップ（抽出）シミュレーション
  */
@@ -7,8 +10,8 @@ class DripSimulation {
    * @param {Object} roastedBean v1で生成された焙煎豆データのJSONオブジェクト
    */
   constructor(roastedBean) {
-    if (!roastedBean || !roastedBean.cuppingScores) {
-      throw new Error("Invalid RoastedBean data provided.");
+    if (!roastedBean || !roastedBean.beanId) {
+      throw new Error(t('error_invalid_roasted_bean'));
     }
     this.bean = roastedBean;
     this.baseScores = roastedBean.cuppingScores;
@@ -35,10 +38,10 @@ class DripSimulation {
     // 2. 抽出パラメータによる補正係数の計算
     // 時間係数: 長いほど出るが、対数的に頭打ちになる (150秒を1.0とする)
     const timeMult = Math.log10(Math.max(10, brewTime)) / Math.log10(150);
-    
+
     // 温度係数: 90℃を1.0として、高いほど抽出促進
     const tempMult = 1.0 + (waterTemp - 90) * 0.02;
-    
+
     // 挽き目係数: 3.0を1.0とし、細かい(値が小さい)ほど抽出促進
     const grindMult = 1.0 + (3.0 - grindSize) * 0.15;
 
@@ -48,7 +51,7 @@ class DripSimulation {
 
     // 4. TDS (濃度) の算出
     // 注いだお湯から、コーヒー粉が吸う分（粉量x2）を引いた量が出来高
-    const brewedLiquid = Math.max(10, waterWeight - (dose * 2)); 
+    const brewedLiquid = Math.max(10, waterWeight - (dose * 2));
     // 溶け出した成分の量 (g)
     const extractedMass = dose * (ey / 100);
     // TDS (%): 出来上がった液体に対する固形成分の割合
@@ -57,13 +60,17 @@ class DripSimulation {
     // 5. カップ評価の算出
     // 適正なEY(18-22%)を基準に、味のバランス（過抽出・未抽出）をシミュレート
     const resultScores = { ...this.baseScores };
+    // Evaluate alerts based on EY & TDS
     let alerts = [];
+    let flavorProfile = [];
+    let overallScore = 0; // Placeholder for overall score adjustment
 
     // 酸味 (Acidity): 抽出序盤に出る。未抽出(EY<18)で強い（酸っぱい）。過抽出(EY>22)で苦味にマスキングされ下がる。
-    if (ey < 18) {
-      resultScores.acidity = Math.min(100, resultScores.acidity * 1.15);
-      alerts.push("未抽出 (Under-extracted) - 酸っぱく薄いコーヒーです");
-    } else if (ey > 22) {
+    if (ey < 18.0) {
+      flavorProfile.push("Sour", "Weak");
+      overallScore -= 10;
+      alerts.push(t('alerts.under_extracted'));
+    } else if (ey > 22.0) {
       resultScores.acidity = resultScores.acidity * 0.8;
     }
 
@@ -77,11 +84,14 @@ class DripSimulation {
     resultScores.aroma = Math.max(0, resultScores.aroma * (1.0 - flavorDist * 0.03));
 
     // クリーンカップ & 渋み: 過抽出(EY>22)になると、後から出る雑味やエグみが急増する
-    if (ey > 22) {
+    if (ey > 22.0) {
+      flavorProfile.push("Bitter", "Astringent");
+      overallScore -= 10;
+      alerts.push(t('alerts.over_extracted'));
+    } else {
       const overExt = ey - 22;
       resultScores.cleanCup -= (overExt * 8);
       resultScores.aftertaste -= (overExt * 5);
-      alerts.push("過抽出 (Over-extracted) - 苦味やエグみ（渋み）が出ています");
     }
 
     // ボディ (Body / 濃度感): TDSの高さに強く影響される (理想は1.25~1.45%前後)
@@ -97,8 +107,8 @@ class DripSimulation {
     }
 
     // 新たな総合評価
-    const sum = resultScores.aroma + resultScores.flavor + resultScores.aftertaste + 
-                resultScores.acidity + resultScores.body + resultScores.sweetness + resultScores.cleanCup;
+    const sum = resultScores.aroma + resultScores.flavor + resultScores.aftertaste +
+      resultScores.acidity + resultScores.body + resultScores.sweetness + resultScores.cleanCup;
     resultScores.overall = Math.round(sum / 7);
 
     return {

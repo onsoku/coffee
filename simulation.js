@@ -2,20 +2,21 @@
  * コーヒー焙煎の物理シミュレーションとSCA簡易評価ロジック
  */
 
-const { beanTypes } = require('./beans');
+const GreenCoffeeLot = require('./beans').GreenCoffeeLot;
+const { t } = require('./i18n');
 
-class RoastSimulation {
-  constructor(beanInstance) {
-    if (!beanInstance || !beanInstance.descriptor) {
-      throw new Error("A valid GreenCoffeeLot instance is required.");
+class RoastingSimulation {
+  constructor(greenBeanLot) {
+    if (!(greenBeanLot instanceof GreenCoffeeLot)) {
+      throw new Error(t('error_invalid_green_bean_lot'));
     }
-    this.bean = beanInstance;
-    
+    this.bean = greenBeanLot;
+
     // シミュレーションの状態 (初期値: 室温25度)
     this.bt = 25; // Bean Temperature (豆温度)
     this.envTemp = 25; // Environment Temperature (網周辺の温度)
     this.time = 0; // 経過秒数
-    
+
     // 記録用
     this.history = [];
     this.events = {
@@ -23,7 +24,7 @@ class RoastSimulation {
       firstCrack: null, // 1ハゼ開始 (~200C)
       secondCrack: null // 2ハゼ開始 (~225C)
     };
-    
+
     // 欠点判定フラグ
     this.defects = {
       baked: false,   // ベイクド（温度上昇の停滞）
@@ -42,7 +43,7 @@ class RoastSimulation {
     // 1. 火力から環境温度への熱伝達
     // 最大火力(100)のとき、環境温度は最大400度程度まで上がると仮定 (コンロの火力設定)
     const targetEnvTemp = 25 + (Math.max(0, heatPower) * 3.8); // 100 -> ~405C
-    
+
     // 環境温度は徐々に目標に近づく
     this.envTemp += (targetEnvTemp - this.envTemp) * 0.05;
 
@@ -102,12 +103,12 @@ class RoastSimulation {
       }
       this.tick(currentPower);
     }
-    
+
     // 未発達の判定
     if (this.bt < 195) {
       this.defects.underdeveloped = true;
     }
-    
+
     return this.evaluate();
   }
 
@@ -168,21 +169,27 @@ class RoastSimulation {
       scores.flavor -= 10;
       scores.acidity -= 10; // 酸味が飛ぶ
     }
-    
+
     // 未発達の判定 (1ハゼ(200C)すら行かずに終了、または温度が低すぎる場合)
     if (finalTemp < 195) {
       this.defects.underdeveloped = true;
     }
 
+    let alerts = [];
     if (this.defects.underdeveloped) {
       scores.cleanCup -= 30;
       scores.aftertaste -= 20; // 渋み
+      alerts.push('未発達 (Underdeveloped): 焙煎が進んでいません！');
+    }
+    if (this.defects.baked) {
+      alerts.push(t('alerts.baked'));
     }
     if (this.defects.scorched) {
       scores.cleanCup -= 40; // 焦げ味
       scores.aftertaste -= 30; // いつまでも焦げ感が残る
       scores.aroma -= 20;
       scores.flavor -= 20;
+      alerts.push(t('alerts.scorched'));
     }
 
     // スコアの正規化 (0-100) と小数点丸め
@@ -193,9 +200,12 @@ class RoastSimulation {
     }
 
     // 7. Overall (総合): 
-    const sum = scores.aroma + scores.flavor + scores.aftertaste + 
-                scores.acidity + scores.body + scores.sweetness + scores.cleanCup;
+    const sum = scores.aroma + scores.flavor + scores.aftertaste +
+      scores.acidity + scores.body + scores.sweetness + scores.cleanCup;
     scores.overall = Math.round(sum / 7);
+
+    // Mock Flavor Profile for now
+    const flavorProfile = ["Aroma", "Flavor", "Body"];
 
     return {
       bean: this.bean.descriptor.id,         // Changed from bean.name to id to align with JSON keys
@@ -205,9 +215,11 @@ class RoastSimulation {
       events: this.events,
       defects: this.defects,
       scores: scores,
-      history: this.history
+      history: this.history,
+      alerts: alerts,
+      flavorProfile: flavorProfile
     };
   }
 }
 
-module.exports = { RoastSimulation };
+module.exports = { RoastSimulation: RoastingSimulation };

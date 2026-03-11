@@ -1,6 +1,6 @@
 {
   "beanId": "colombia",
-  "roastDate": "2026-03-10T12:07:22.240Z",
+  "roastDate": "2026-03-11T11:55:55.579Z",
   "totalRoastTime": 1201,
   "finalTemperature": 137.7,
   "roastLevel": "Underdeveloped",
@@ -865,5 +865,14 @@
       "ror": 0,
       "heatPower": 30
     }
+  ],
+  "flavorProfile": [
+    "Aroma",
+    "Flavor",
+    "Body"
+  ],
+  "alerts": [
+    "未発達 (Underdeveloped): 焙煎が進んでいません！",
+    "Baked / flat taste. Lost acidity and aroma due to stalled roasting."
   ]
 }

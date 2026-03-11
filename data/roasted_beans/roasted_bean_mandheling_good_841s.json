@@ -1,6 +1,6 @@
 {
   "beanId": "indonesia",
-  "roastDate": "2026-03-10T12:07:22.234Z",
+  "roastDate": "2026-03-11T11:55:55.573Z",
   "totalRoastTime": 841,
   "finalTemperature": 210.9,
   "roastLevel": "Medium-Dark",
@@ -613,5 +613,11 @@
       "ror": -0.08,
       "heatPower": 45
     }
-  ]
+  ],
+  "flavorProfile": [
+    "Aroma",
+    "Flavor",
+    "Body"
+  ],
+  "alerts": []
 }

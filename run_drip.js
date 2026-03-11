@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { t } = require('./i18n');
 const { DripSimulation } = require('./drip_simulation');
 
 const REPORTS_DIR = path.join(__dirname, 'data', 'reports');
@@ -19,30 +20,41 @@ fs.writeFileSync(REPORT_FILE, '', 'utf8');
 function printReport(result, title) {
   let output = '';
   output += '\n==================================================\n';
-  output += `☕ DRIP REPORT: ${title}\n`;
+  output += t('report.drip', { title: title }) + '\n';
   output += '==================================================\n';
-  output += `■ 抽出レシピ :\n`;
-  output += `  - 粉量      : ${result.recipe.dose} g\n`;
-  output += `  - 湯量      : ${result.recipe.waterWeight} g (Ratio 1:${result.physics.brewRatio})\n`;
-  output += `  - 湯温      : ${result.recipe.waterTemp} ℃\n`;
-  output += `  - 挽き目    : ${result.recipe.grindSize} (1.0~5.0)\n`;
-  output += `  - 抽出時間  : ${Math.floor(result.recipe.brewTime / 60)}分 ${result.recipe.brewTime % 60}秒\n`;
+  output += t('report.drip_recipe') + '\n';
+  output += t('report.drip_dose', { amount: result.recipe.dose }) + '\n';
+  output += t('report.drip_water', { amount: result.recipe.waterWeight, ratio: result.physics.brewRatio }) + '\n';
+  output += t('report.drip_temp', { temp: result.recipe.waterTemp }) + '\n';
+  output += t('report.drip_grind', { grind: result.recipe.grindSize }) + '\n';
+  output += t('report.drip_time', { minutes: Math.floor(result.recipe.brewTime / 60), seconds: result.recipe.brewTime % 60 }) + '\n';
   output += '--------------------------------------------------\n';
-  output += `■ 抽出物理データ :\n`;
-  output += `  - EY (収率) : ${result.physics.extractionYield} % (理想: 18~22%)\n`;
-  output += `  - TDS (濃度): ${result.physics.tds} % (理想: 1.15~1.45%)\n`;
-  output += `  - 抽出液量  : ${result.physics.brewedLiquid} g\n`;
+  output += t('report.drip_physics_data') + '\n';
+  output += t('report.drip_ey', { ey: result.physics.extractionYield }) + '\n';
+  output += t('report.drip_tds', { tds: result.physics.tds }) + '\n';
+  output += t('report.drip_brewed_liquid', { amount: result.physics.brewedLiquid }) + '\n';
   output += '--------------------------------------------------\n';
-  
+
   if (result.alerts && result.alerts.length > 0) {
-    output += '■ ⚠️ アラート :\n';
+    output += t('report.alerts') + '\n';
     result.alerts.forEach(msg => { output += '  ' + msg + '\n'; });
     output += '--------------------------------------------------\n';
   }
 
-  output += '■ 抽出後カップ評価 (100点満点) :\n';
-  
-  const logScore = (label, score) => {
+  output += t('report.sca_score') + '\n';
+
+  const scoreLabels = {
+    aroma: t('scores.aroma'),
+    flavor: t('scores.flavor'),
+    aftertaste: t('scores.aftertaste'),
+    acidity: t('scores.acidity'),
+    body: t('scores.body'),
+    sweetness: t('scores.sweetness'),
+    cleanCup: t('scores.clean_cup'),
+  };
+
+  const logScore = (labelKey, score) => {
+    const label = scoreLabels[labelKey] || labelKey;
     const length = 20;
     const filled = Math.round((Math.max(0, Math.min(100, score)) / 100) * length);
     const empty = length - filled;
@@ -50,27 +62,27 @@ function printReport(result, title) {
     output += `  ${label.padEnd(16, ' ')} : ${msg}\n`;
   };
 
-  logScore('香り (Aroma)', result.finalScores.aroma);
-  logScore('風味 (Flavor)', result.finalScores.flavor);
-  logScore('後味 (Aftertaste)', result.finalScores.aftertaste);
-  logScore('酸味 (Acidity)', result.finalScores.acidity);
-  logScore('ボディ (Body)', result.finalScores.body);
-  logScore('甘さ (Sweetness)', result.finalScores.sweetness);
-  logScore('クリーンカップ', result.finalScores.cleanCup);
-  output += `  ★ 総合評価      : ${result.finalScores.overall} 点\n`;
+  logScore('aroma', result.finalScores.aroma);
+  logScore('flavor', result.finalScores.flavor);
+  logScore('aftertaste', result.finalScores.aftertaste);
+  logScore('acidity', result.finalScores.acidity);
+  logScore('body', result.finalScores.body);
+  logScore('sweetness', result.finalScores.sweetness);
+  logScore('cleanCup', result.finalScores.cleanCup);
+  output += `  ${t('report.score_overall_label')} : ${result.finalScores.overall} ${t('report.score_unit')}\n`;
   output += '==================================================\n\n';
 
   fs.appendFileSync(REPORT_FILE, output, 'utf8');
 }
 
 process.on('exit', () => {
-  console.log(`✅ ドリップ・シミュレーション完了。結果は ${REPORT_FILE} に出力されました。`);
+  console.log(t('drip_simulation_completed', { file: REPORT_FILE }));
 });
 
 // ファイルから焙煎済みデータを検索してロードする（エチオピアの成功データを利用）
 const ROASTED_BEANS_DIR = path.join(__dirname, 'data', 'roasted_beans');
 if (!fs.existsSync(ROASTED_BEANS_DIR)) {
-  console.error(`エラー: ${ROASTED_BEANS_DIR} ディレクトリが見つかりません。先に run_simulation.js を実行してください。`);
+  console.error(t('error_no_roasted_beans_dir', { dir: ROASTED_BEANS_DIR }));
   process.exit(1);
 }
 
@@ -123,6 +135,6 @@ const recipeStrong = {
   waterWeight: 250, // 湯量は同じ (Ratio 1:12.5)
   waterTemp: 90,
   grindSize: 3.5, // 濃くなりすぎないよう少し粗く
-  brewTime: 180 
+  brewTime: 180
 };
 printReport(sim.brew(recipeStrong), "ストロング (粉量多めの濃い抽出)");

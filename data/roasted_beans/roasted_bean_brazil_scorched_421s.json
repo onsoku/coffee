@@ -1,6 +1,6 @@
 {
   "beanId": "brazil",
-  "roastDate": "2026-03-10T12:07:22.237Z",
+  "roastDate": "2026-03-11T11:55:55.576Z",
   "totalRoastTime": 421,
   "finalTemperature": 350.5,
   "roastLevel": "Very Dark / Scorched",
@@ -319,5 +319,11 @@
       "ror": 0.28,
       "heatPower": 100
     }
-  ]
+  ],
+  "flavorProfile": [
+    "Aroma",
+    "Flavor",
+    "Body"
+  ],
+  "alerts": []
 }

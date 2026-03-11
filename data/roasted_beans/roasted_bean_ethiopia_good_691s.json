@@ -1,6 +1,6 @@
 {
   "beanId": "ethiopia",
-  "roastDate": "2026-03-10T12:07:22.231Z",
+  "roastDate": "2026-03-11T11:55:55.569Z",
   "totalRoastTime": 691,
   "finalTemperature": 231.4,
   "roastLevel": "Medium-Dark",
@@ -508,5 +508,11 @@
       "ror": -0.08,
       "heatPower": 50
     }
-  ]
+  ],
+  "flavorProfile": [
+    "Aroma",
+    "Flavor",
+    "Body"
+  ],
+  "alerts": []
 }
